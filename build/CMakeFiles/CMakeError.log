@@ -1,0 +1,38 @@
+Determining if the include file pthread.h exists failed with the following output:
+Change Dir: e:/CUFE CHS Materials/Senior 1/Semester 7/Graphics/New Material/Assignment3/Assignment3/MyAssignment3/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_ca78c.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.6.82.30579 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 19/12/2018 07:56:06 م.
+Project "e:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\cmTC_ca78c.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_ca78c.dir\Debug\".
+  Creating directory "E:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_ca78c.dir\Debug\cmTC_ca78c.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_ca78c.dir\Debug\cmTC_ca78c.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.13.26128\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_ca78c.dir\Debug\\" /Fd"cmTC_ca78c.dir\Debug\vc141.pdb" /Gd /TC /analyze- /FC /errorReport:queue "E:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.13.26129 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_ca78c.dir\Debug\\" /Fd"cmTC_ca78c.dir\Debug\vc141.pdb" /Gd /TC /analyze- /FC /errorReport:queue "E:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\CheckIncludeFile.c"
+  CheckIncludeFile.c
+  
+e:\cufe chs materials\senior 1\semester 7\graphics\new material\assignment3\assignment3\myassignment3\build\cmakefiles\cmaketmp\checkincludefile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [e:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\cmTC_ca78c.vcxproj]
+Done Building Project "e:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\cmTC_ca78c.vcxproj" (default targets) -- FAILED.
+
+Build FAILED.
+
+"e:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\cmTC_ca78c.vcxproj" (default target) (1) ->
+(ClCompile target) -> 
+  e:\cufe chs materials\senior 1\semester 7\graphics\new material\assignment3\assignment3\myassignment3\build\cmakefiles\cmaketmp\checkincludefile.c(1): fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory [e:\CUFE CHS Materials\Senior 1\Semester 7\Graphics\New Material\Assignment3\Assignment3\MyAssignment3\build\CMakeFiles\CMakeTmp\cmTC_ca78c.vcxproj]
+
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:01.77
+
+
