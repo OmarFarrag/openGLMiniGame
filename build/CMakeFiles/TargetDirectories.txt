@@ -1,4 +1,8 @@
-E:/CUFE CHS Materials/Senior 1/Semester 7/Graphics/New Material/Assignment3/Assignment3/MyAssignment3/build/CMakeFiles/assignment3.dir
-E:/CUFE CHS Materials/Senior 1/Semester 7/Graphics/New Material/Assignment3/Assignment3/MyAssignment3/build/CMakeFiles/ALL_BUILD.dir
-E:/CUFE CHS Materials/Senior 1/Semester 7/Graphics/New Material/Assignment3/Assignment3/MyAssignment3/build/vendor/glfw/CMakeFiles/ALL_BUILD.dir
-E:/CUFE CHS Materials/Senior 1/Semester 7/Graphics/New Material/Assignment3/Assignment3/MyAssignment3/build/vendor/glfw/src/CMakeFiles/glfw.dir
+/home/engineer/Desktop/openGLMiniGame/build/CMakeFiles/edit_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/CMakeFiles/rebuild_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/CMakeFiles/assignment3.dir
+/home/engineer/Desktop/openGLMiniGame/build/vendor/glfw/CMakeFiles/rebuild_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/vendor/glfw/CMakeFiles/edit_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/vendor/glfw/src/CMakeFiles/rebuild_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/vendor/glfw/src/CMakeFiles/edit_cache.dir
+/home/engineer/Desktop/openGLMiniGame/build/vendor/glfw/src/CMakeFiles/glfw.dir

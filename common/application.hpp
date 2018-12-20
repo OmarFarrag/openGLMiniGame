@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 
 #include <input/keyboard.hpp>
-#include <Input/mouse.hpp>
+#include <input/mouse.hpp>
 
 class Scene;
 

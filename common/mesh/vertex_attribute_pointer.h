@@ -4,7 +4,7 @@
 template<typename T>
 inline void defineAttributePointer(){
     //Force defining a specialization for vertex structs
-    static_assert(false, "Type has no attribute pointer definition");
+    //static_assert(false, "Type has no attribute pointer definition");
 }
 
 template<>
