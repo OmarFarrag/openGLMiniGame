@@ -64,7 +64,7 @@ void DirectionalLightScene::initMap()
 
     plane = MeshUtils::SubdividedPlane();
 
-    heightmap = TextureUtils::Load2DTextureFromFile("assets/textures/terrain.jpg");
+    heightmap = TextureUtils::Load2DTextureFromFile("assets/textures/terrainnew.jpg");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -103,7 +103,7 @@ void DirectionalLightScene::drawMap(glm::mat4 VP)
 
     glUniform2f(terraintilingLoc, 20, 20);
 
-    glm::mat4 ground_mat = glm::scale(glm::mat4(), glm::vec3(100, 25, 100));
+    glm::mat4 ground_mat = glm::scale(glm::mat4(), glm::vec3(200, 25, 200));
     glUniformMatrix4fv(terrainmvpLoc, 1, GL_FALSE, glm::value_ptr(VP * ground_mat));
     plane->draw();
 }
@@ -126,7 +126,7 @@ void DirectionalLightScene::Initialize()
     // tank = new Tank(tank1_pos);
     // tanks.push_back(tank);
 
-    cameraPosition = {50, 10, 10};
+    cameraPosition = {0, 7, 0};
     initMap();
     initBullets();
 
@@ -168,9 +168,9 @@ void DirectionalLightScene::Initialize()
     camera->setUp({0, 1, 0});
 
     controller = new FlyCameraController(this, camera);
-    controller->setYaw(-glm::half_pi<float>());
+    controller->setYaw(3);
     controller->setPitch(-glm::quarter_pi<float>());
-    controller->setPosition({50, 10, 10});
+    controller->setPosition(cameraPosition);
 
     //TankTex = TextureUtils::#include <textures/texture2d.hpp>Load2DTextureFromFile("assets/models/Tank_M1A1/tank4.jpg");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -313,9 +313,9 @@ void DirectionalLightScene::Draw()
     // }
     // ground->draw();
 
-    glm::mat4 model2_mat = glm::translate(glm::mat4(), {TankPosition.x, 6.05, TankPosition.z}) *
+    glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
-    model2_mat = model2_mat * glm::rotate(glm::mat4(), TankRotation, {0, 1, 0});
+    model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>() , {0, 1, 0});
     shader->set("M", model2_mat);
     shader->set("M_it", glm::transpose(glm::inverse(model2_mat)));
 
