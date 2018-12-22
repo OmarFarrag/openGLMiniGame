@@ -3,6 +3,9 @@
 in vec2 vUV;
 in float height;
 
+in float visibility;
+vec3 skyColour = vec3(0.859375,0.809375,0.889375);
+
 uniform sampler2D tex;
 uniform sampler2D bottom;
 uniform sampler2D top;
@@ -16,4 +19,5 @@ void main()
     //in this case, below 0.2 is bottom and above 0.6 is top and in-between will be blended
     vec4 terrainColor = mix(texture(bottom, vUV), texture(top, vUV), smoothstep(0.2f, 0.6f, height));
     color = terrainColor;
+    color = mix(vec4(skyColour,1.0), color, visibility);
 }
