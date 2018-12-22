@@ -75,7 +75,7 @@ class DirectionalLightScene : public Scene
     void drawBullet(glm::mat4 VP);
     void drawTank();
     void spawnTank();
-    
+    void fight();
     int genRandom();
 };
 

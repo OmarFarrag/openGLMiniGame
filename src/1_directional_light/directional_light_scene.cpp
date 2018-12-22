@@ -111,22 +111,14 @@ void DirectionalLightScene::drawMap(glm::mat4 VP)
 void DirectionalLightScene::Initialize()
 {
     spawnCounter = -1;
-    spawnDelay = 100;
-    locationsCount = 100;
+    spawnDelay = 10;
+    locationsCount = 25;
     tankLocations = new int[locationsCount];
     for (int i = 0; i < locationsCount; i++)
         tankLocations[i] = 0;
-    maxPerColumn = 1;
+    maxPerColumn = 5;
 
-    // glm::vec3 tank1_pos = {30, 30, 0};
-    // Tank *tank = new Tank(tank1_pos);
-    // tanks.push_back(tank);
-
-    // tank1_pos = {32, 30, 0};
-    // tank = new Tank(tank1_pos);
-    // tanks.push_back(tank);
-
-    cameraPosition = {0, 7, 0};
+    cameraPosition = {0, 12, 0};
     initMap();
     initBullets();
 
@@ -140,7 +132,7 @@ void DirectionalLightScene::Initialize()
     skyShader->attach("assets/shaders/sky.frag", GL_FRAGMENT_SHADER);
     skyShader->link();
 
-    TankPosition = {35, 30, 0};
+    //TankPosition = {35, 60, 0};
     TankRotation = 0;
 
     ground = MeshUtils::Plane({0, 0}, {5, 5});
@@ -246,7 +238,40 @@ void DirectionalLightScene::Update(double delta_time)
     //move bullets
     for (size_t i = 0; i < bullets.size(); i++)
     {
-        bulletsPositions[i] = bulletsPositions[i] + glm::vec3{0.02 * bulletsDirections[i][0], 0.02 * bulletsDirections[i][1], 0.02 * bulletsDirections[i][2]};
+        bulletsPositions[i] = bulletsPositions[i] + glm::vec3{0.06 * bulletsDirections[i][0], 0.06 * bulletsDirections[i][1], 0.06 * bulletsDirections[i][2]};
+    }
+
+    for (size_t i = 0; i < tanks.size(); i++)
+    {
+        glm::vec3 pos = tanks[i]->getPosition();
+        if (sqrt(pos.x * pos.x + pos.z * pos.z) > (10 + 6 * tanks[i]->getID()))
+            tanks[i]->move(delta_time * 40);
+    }
+}
+
+void DirectionalLightScene::fight()
+{
+    float distance;
+    glm::vec3 tp, bp;
+    for(size_t i = 0; i < bullets.size(); i++)
+    {
+        bp = bulletsPositions[i];
+        for(size_t j = 0; j < tanks.size(); j++)
+        {
+            tp = tanks[j]->getPosition();
+            distance = sqrt((tp.x - bp.x)*(tp.x - bp.x) + (tp.y - bp.y)*(tp.y - bp.y) + (tp.z - bp.z)*(tp.z - bp.z));
+            if(distance <= 1)
+            {
+                if(!tanks[j]->decreaseHealth(10))
+                {
+                    tanks.erase(tanks.begin() + j);
+                }
+                bulletsPositions.erase(bulletsPositions.begin() + i);
+                bullets.erase(bullets.begin() + i);
+                bulletsDirections.erase(bulletsDirections.begin() + i);
+                break;
+            }
+        }
     }
 }
 
@@ -315,7 +340,7 @@ void DirectionalLightScene::Draw()
 
     glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
-    model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>() , {0, 1, 0});
+    model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
     shader->set("M", model2_mat);
     shader->set("M_it", glm::transpose(glm::inverse(model2_mat)));
 
@@ -359,6 +384,7 @@ void DirectionalLightScene::Draw()
 
     spawnTank();
     drawTank();
+    fight();
 }
 
 void DirectionalLightScene::Finalize()
@@ -405,12 +431,14 @@ void DirectionalLightScene::spawnTank()
         return;
 
     int location = genRandom();
+    if (location == -1)
+        return;
     tankLocations[location]++;
     double theta = 2 * 3.141529 * location / locationsCount;
-    
-    glm::vec3 pos = {r * cos(theta), 10, r * sin(theta)}; 
-    Tank *spawnedTank = new Tank(pos, tankMesh, *TankText, 3.141529*3*0.5 -  theta);
-    
+
+    glm::vec3 pos = {r * cos(theta), 6.05, r * sin(theta)};
+    Tank *spawnedTank = new Tank(pos, tankMesh, 3.141529 * 3 * 0.5 - theta, tankLocations[location]);
+
     tanks.push_back(spawnedTank);
 }
 
@@ -418,13 +446,15 @@ int DirectionalLightScene::genRandom()
 {
     /* initialize random seed: */
     srand(time(NULL));
-
-    int random = rand() % locationsCount;
-
-    while (tankLocations[random] == maxPerColumn)
+    int random;
+    for (int i = 0; i < 10; i++)
     {
         random = rand() % locationsCount;
+        if (tankLocations[random] != maxPerColumn)
+        {
+            return random;
+        }
     }
 
-    return random;
+    return -1;
 }

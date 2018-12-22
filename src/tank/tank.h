@@ -10,13 +10,16 @@ class Tank
     glm::vec3 position;
     float rotation;
     Mesh* mesh;
-    Texture2D *tex;
+    int ID;
+    int maxBullets = 100;
 
   public:
-    Tank(glm::vec3 position, Mesh*, Texture2D*, float theta);
+    Tank(glm::vec3 position, Mesh*, float theta, int ID);
     void setPosition(glm::vec3 position);
     void rotate(float theta);
-    void decreaseHealth(double damage);
+    void move(float displacement);
+    bool decreaseHealth(double damage);
+    int getID();
     glm::vec3 getPosition();
     double getHealth();
     void setHealth(double health);

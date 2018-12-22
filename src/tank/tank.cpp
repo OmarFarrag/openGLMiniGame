@@ -15,13 +15,13 @@ enum TextureType
     EMISSIVE = 4
 };
 
-Tank::Tank(glm::vec3 position, Mesh* tankMesh, Texture2D* tankTex, float theta)
+Tank::Tank(glm::vec3 position, Mesh* tankMesh, float theta, int ID)
 {
     this->position = position;
+    this->ID = ID;
     rotation = theta;
     health = 100;
      mesh = tankMesh;
-     tex = tankTex;
 }
 
 void Tank::setPosition(glm::vec3 position)
@@ -29,9 +29,11 @@ void Tank::setPosition(glm::vec3 position)
     this->position = position;
 }
 
-void Tank::decreaseHealth(double damage)
+bool Tank::decreaseHealth(double damage)
 {
     this->health -= damage;
+    if(health <= 0) return false;
+    return true;
 }
 glm::vec3 Tank::getPosition()
 {
@@ -47,13 +49,24 @@ void Tank::setHealth(double health)
 }
 glm::mat4 Tank::draw()
 {
-    glm::mat4 model2_mat = glm::translate(glm::mat4(), {position.x, 6.05, position.z}) *
+    glm::mat4 model2_mat = glm::translate(glm::mat4(), {position.x, position.y, position.z}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
     model2_mat = model2_mat * glm::rotate(glm::mat4(), rotation, {0, 1, 0});
     return model2_mat;
 }
 
+void Tank::move(float displacement)
+{
+    position.z += cos(rotation) * displacement;
+    position.x += sin(rotation) * displacement;
+}
+
 void Tank::meshDraw()
 {
     mesh->draw();
+}
+
+int Tank::getID()
+{
+    return ID;
 }
