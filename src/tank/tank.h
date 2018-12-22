@@ -13,8 +13,9 @@ class Tank
     Texture2D *tex;
 
   public:
-    Tank(glm::vec3 position, Mesh*, Texture2D*);
+    Tank(glm::vec3 position, Mesh*, Texture2D*, float theta);
     void setPosition(glm::vec3 position);
+    void rotate(float theta);
     void decreaseHealth(double damage);
     glm::vec3 getPosition();
     double getHealth();

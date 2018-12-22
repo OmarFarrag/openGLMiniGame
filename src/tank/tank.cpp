@@ -15,10 +15,10 @@ enum TextureType
     EMISSIVE = 4
 };
 
-Tank::Tank(glm::vec3 position, Mesh* tankMesh, Texture2D* tankTex)
+Tank::Tank(glm::vec3 position, Mesh* tankMesh, Texture2D* tankTex, float theta)
 {
     this->position = position;
-    rotation = 0;
+    rotation = theta;
     health = 100;
      mesh = tankMesh;
      tex = tankTex;
@@ -28,6 +28,7 @@ void Tank::setPosition(glm::vec3 position)
 {
     this->position = position;
 }
+
 void Tank::decreaseHealth(double damage)
 {
     this->health -= damage;

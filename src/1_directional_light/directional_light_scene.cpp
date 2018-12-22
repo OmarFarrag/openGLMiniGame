@@ -408,9 +408,9 @@ void DirectionalLightScene::spawnTank()
     tankLocations[location]++;
     double theta = 2 * 3.141529 * location / locationsCount;
     
-    glm::vec3 pos = {r * cos(theta), 10, r * sin(theta)};
-    Tank *spawnedTank = new Tank(pos, tankMesh, *TankText);
-
+    glm::vec3 pos = {r * cos(theta), 10, r * sin(theta)}; 
+    Tank *spawnedTank = new Tank(pos, tankMesh, *TankText, 3.141529*3*0.5 -  theta);
+    
     tanks.push_back(spawnedTank);
 }
 
@@ -421,10 +421,10 @@ int DirectionalLightScene::genRandom()
 
     int random = rand() % locationsCount;
 
-    //while (tankLocations[random] == maxPerColumn)
-    //{
+    while (tankLocations[random] == maxPerColumn)
+    {
         random = rand() % locationsCount;
-    //}
+    }
 
     return random;
 }
