@@ -42,17 +42,17 @@ public:
     }
 
     void update(double delta_time){
-        if(mouse->justPressed(GLFW_MOUSE_BUTTON_1)){
-            mouse->lockMouse();
-        } else if(mouse->justReleased(GLFW_MOUSE_BUTTON_1)){
-            mouse->unlockMouse();
-        }
+        // if(mouse->justPressed(GLFW_MOUSE_BUTTON_1)){
+        //     mouse->lockMouse();
+        // } else if(mouse->justReleased(GLFW_MOUSE_BUTTON_1)){
+        //     mouse->unlockMouse();
+        // }
 
-        if(mouse->isPressed(GLFW_MOUSE_BUTTON_1)){
+        //if(mouse->isPressed(GLFW_MOUSE_BUTTON_1)){
             glm::vec2 delta = mouse->getMouseDelta();
             pitch -= delta.y * pitchSenstivity;
             yaw += delta.x * yawSenstivity;
-        }
+      //  }
         
         if(pitch < -glm::half_pi<float>() * 0.99f) pitch = -glm::half_pi<float>() * 0.99f;
         if(pitch >  glm::half_pi<float>() * 0.99f) pitch  = glm::half_pi<float>() * 0.99f;
@@ -60,12 +60,12 @@ public:
         
         glm::vec3 front = camera->Front(), up = camera->Up(), right = camera->Right();
 
-        if(keyboard->isPressed(GLFW_KEY_W)) position += front * ((float)delta_time * positionSenstivity.z);
-        if(keyboard->isPressed(GLFW_KEY_S)) position -= front * ((float)delta_time * positionSenstivity.z);
-        if(keyboard->isPressed(GLFW_KEY_Q)) position += up * ((float)delta_time * positionSenstivity.y);
-        if(keyboard->isPressed(GLFW_KEY_E)) position -= up * ((float)delta_time * positionSenstivity.y);
-        if(keyboard->isPressed(GLFW_KEY_D)) position += right * ((float)delta_time * positionSenstivity.x);
-        if(keyboard->isPressed(GLFW_KEY_A)) position -= right * ((float)delta_time * positionSenstivity.x);
+        // if(keyboard->isPressed(GLFW_KEY_W)) position += front * ((float)delta_time * positionSenstivity.z);
+        // if(keyboard->isPressed(GLFW_KEY_S)) position -= front * ((float)delta_time * positionSenstivity.z);
+        // if(keyboard->isPressed(GLFW_KEY_Q)) position += up * ((float)delta_time * positionSenstivity.y);
+        // if(keyboard->isPressed(GLFW_KEY_E)) position -= up * ((float)delta_time * positionSenstivity.y);
+        // if(keyboard->isPressed(GLFW_KEY_D)) position += right * ((float)delta_time * positionSenstivity.x);
+        // if(keyboard->isPressed(GLFW_KEY_A)) position -= right * ((float)delta_time * positionSenstivity.x);
 
         camera->setDirection(glm::vec3(glm::cos(yaw), 0, glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
         camera->setPosition(position);

@@ -186,6 +186,8 @@ void DirectionalLightScene::Update(double delta_time)
     controller->update(delta_time);
     Keyboard *kb = getKeyboard();
 
+    //cameraPosition = controller->getPosition();
+
     float pitch_speed = 1.0f, yaw_speed = 1.0f;
 
     if (kb->isPressed(GLFW_KEY_I))
