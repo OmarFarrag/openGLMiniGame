@@ -43,7 +43,7 @@ public:
 
     void update(double delta_time){
         // if(mouse->justPressed(GLFW_MOUSE_BUTTON_1)){
-        //     mouse->lockMouse();
+             mouse->lockMouse();
         // } else if(mouse->justReleased(GLFW_MOUSE_BUTTON_1)){
         //     mouse->unlockMouse();
         // }
@@ -51,7 +51,9 @@ public:
         //if(mouse->isPressed(GLFW_MOUSE_BUTTON_1)){
             glm::vec2 delta = mouse->getMouseDelta();
             pitch -= delta.y * pitchSenstivity;
-            yaw += delta.x * yawSenstivity;
+//            if(yaw + delta.x * yawSenstivity>2.7 && yaw + delta.x * yawSenstivity < 4){
+                yaw += delta.x * yawSenstivity;
+          //  }
       //  }
         
         if(pitch < -glm::half_pi<float>() * 0.99f) pitch = -glm::half_pi<float>() * 0.99f;
