@@ -15,24 +15,13 @@ enum TextureType
     EMISSIVE = 4
 };
 
-Tank::Tank(glm::vec3 position)
+Tank::Tank(glm::vec3 position, Mesh* tankMesh, Texture2D* tankTex)
 {
     this->position = position;
     rotation = 0;
     health = 100;
-    mesh = MeshUtils::LoadObj("assets/models/Tank_M1A1/Tank M1A1.obj");
-
-    texture[ALBEDO] = TextureUtils::Load2DTextureFromFile("assets/textures/Metal_col.jpg");
-    texture[SPECULAR] = TextureUtils::Load2DTextureFromFile("assets/textures/Metal_spc.jpg");
-    texture[ROUGHNESS] = TextureUtils::Load2DTextureFromFile("assets/models/Tank_M1A1/tank4.jpg");
-    texture[AMBIENT_OCCLUSION] = TextureUtils::Load2DTextureFromFile("assets/textures/Suzanne_ao.jpg");
-    texture[EMISSIVE] = TextureUtils::SingleColor({0, 0, 0, 1});
-
-    for (int i = 0; i < 5; i++)
-    {
-        glActiveTexture(GL_TEXTURE0 + i);
-        texture[i]->bind();
-    }
+     mesh = tankMesh;
+     tex = tankTex;
 }
 
 void Tank::setPosition(glm::vec3 position)

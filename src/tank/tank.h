@@ -9,11 +9,11 @@ class Tank
     double health;
     glm::vec3 position;
     float rotation;
-    Mesh *mesh;
-    Texture2D *texture[5];
+    Mesh* mesh;
+    Texture2D *tex;
 
   public:
-    Tank(glm::vec3 position);
+    Tank(glm::vec3 position, Mesh*, Texture2D*);
     void setPosition(glm::vec3 position);
     void decreaseHealth(double damage);
     glm::vec3 getPosition();
