@@ -31,6 +31,13 @@ class DirectionalLightScene : public Scene
     Mesh *model, *tankMesh;
     bool check = false;
     float num = 4.33337;
+
+    int spawnCounter;
+    int spawnDelay;     // Tank spawning speed
+    int locationsCount; // Number of tank columns
+    int *tankLocations; // Number of tanks in each column. Zeroes initially
+    int maxPerColumn;   // Max number of tanks per column
+    
     Texture2D *TankText[5];
     Texture2D *metal[5];
     Texture2D *wood[5];
@@ -67,6 +74,9 @@ class DirectionalLightScene : public Scene
     void addBullet();
     void drawBullet(glm::mat4 VP);
     void drawTank();
+    void spawnTank();
+    
+    int genRandom();
 };
 
 #endif

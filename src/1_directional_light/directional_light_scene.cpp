@@ -8,6 +8,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <stdlib.h> /* srand, rand */
+#include <time.h>   /* time */
+
 void DirectionalLightScene::initBullets()
 {
     bulletShader = new Shader();
@@ -107,13 +110,21 @@ void DirectionalLightScene::drawMap(glm::mat4 VP)
 
 void DirectionalLightScene::Initialize()
 {
-    glm::vec3 tank1_pos = {30, 30, 0};
-    Tank *tank = new Tank(tank1_pos);
-    tanks.push_back(tank);
+    spawnCounter = -1;
+    spawnDelay = 100;
+    locationsCount = 100;
+    tankLocations = new int[locationsCount];
+    for (int i = 0; i < locationsCount; i++)
+        tankLocations[i] = 0;
+    maxPerColumn = 1;
 
-    tank1_pos = {32, 30, 0};
-    tank = new Tank(tank1_pos);
-    tanks.push_back(tank);
+    // glm::vec3 tank1_pos = {30, 30, 0};
+    // Tank *tank = new Tank(tank1_pos);
+    // tanks.push_back(tank);
+
+    // tank1_pos = {32, 30, 0};
+    // tank = new Tank(tank1_pos);
+    // tanks.push_back(tank);
 
     cameraPosition = {0, 7, 0};
     initMap();
@@ -346,6 +357,7 @@ void DirectionalLightScene::Draw()
     drawMap(VP);
     drawBullet(VP);
 
+    spawnTank();
     drawTank();
 }
 
@@ -383,4 +395,36 @@ void DirectionalLightScene::drawTank()
         shader->set("material.emissive_tint", glm::vec3(1, 1, 1) * emissive_power);
         tanks[i]->meshDraw();
     }
+}
+
+void DirectionalLightScene::spawnTank()
+{
+    int r = 50;
+    spawnCounter++;
+    if (spawnCounter % spawnDelay)
+        return;
+
+    int location = genRandom();
+    tankLocations[location]++;
+    double theta = 2 * 3.141529 * location / locationsCount;
+    
+    glm::vec3 pos = {r * cos(theta), 10, r * sin(theta)};
+    Tank *spawnedTank = new Tank(pos, tankMesh, *TankText);
+
+    tanks.push_back(spawnedTank);
+}
+
+int DirectionalLightScene::genRandom()
+{
+    /* initialize random seed: */
+    srand(time(NULL));
+
+    int random = rand() % locationsCount;
+
+    //while (tankLocations[random] == maxPerColumn)
+    //{
+        random = rand() % locationsCount;
+    //}
+
+    return random;
 }
