@@ -26,9 +26,23 @@ void DirectionalLightScene::initBullets()
 
 void DirectionalLightScene::addBullet()
 {
+    // glm::vec3 bulletpos=TankPosition;
+    // bulletpos.y=6;
     bullets.push_back(MeshUtils::Sphere());
-    bulletsPositions.push_back(cameraPosition);
+    bulletsPositions.push_back({0,7,0});
     bulletsDirections.push_back(controller->getDirection());
+}
+void DirectionalLightScene::addEnemyBullet(glm::vec3 enemyTankPosition)
+{
+    enemybullets.push_back(MeshUtils::Sphere());
+    enemybulletsPositions.push_back(enemyTankPosition);
+
+    
+    enemyTankPosition[0] = enemyTankPosition[0] / enemyTankPosition.length(); 
+    enemyTankPosition[1] = enemyTankPosition[1] / enemyTankPosition.length(); 
+    enemyTankPosition[2] = enemyTankPosition[2] / enemyTankPosition.length(); 
+
+    enemybulletsDirections.push_back(-enemyTankPosition);
 }
 
 void DirectionalLightScene::drawBullet(glm::mat4 VP)
@@ -48,6 +62,25 @@ void DirectionalLightScene::drawBullet(glm::mat4 VP)
         bullets[i]->draw();
     }
 }
+
+void DirectionalLightScene::drawEnemyBullet(glm::mat4 VP)
+{
+    if (enemybullets.empty())
+        return;
+    moonTex->bind();
+    bulletShader->use();
+
+    for (size_t i = 0; i < enemybullets.size(); i++)
+    {
+        glm::mat4 moon_mat = glm::translate(glm::mat4(), enemybulletsPositions[i]) *
+                             glm::rotate(glm::mat4(), glm::quarter_pi<float>(), {0, 0, 1}) *
+                             glm::rotate(glm::mat4(), (float)glfwGetTime(), {0, 1, 0}) *
+                             glm::scale(glm::mat4(), glm::vec3(0.2, 0.2, 0.2));
+        glUniformMatrix4fv(bulletmvp, 1, GL_FALSE, glm::value_ptr(VP * moon_mat));
+        enemybullets[i]->draw();
+    }
+}
+
 
 void DirectionalLightScene::initMap()
 {
@@ -111,14 +144,14 @@ void DirectionalLightScene::drawMap(glm::mat4 VP)
 void DirectionalLightScene::Initialize()
 {
     spawnCounter = -1;
-    spawnDelay = 10;
+    spawnDelay = 1000;
     locationsCount = 25;
     tankLocations = new int[locationsCount];
     for (int i = 0; i < locationsCount; i++)
         tankLocations[i] = 0;
     maxPerColumn = 5;
 
-    cameraPosition = {0, 12, 0};
+    cameraPosition = {0, 7, 0};
     initMap();
     initBullets();
 
@@ -238,7 +271,13 @@ void DirectionalLightScene::Update(double delta_time)
     //move bullets
     for (size_t i = 0; i < bullets.size(); i++)
     {
+         
+
         bulletsPositions[i] = bulletsPositions[i] + glm::vec3{0.06 * bulletsDirections[i][0], 0.06 * bulletsDirections[i][1], 0.06 * bulletsDirections[i][2]};
+    }
+        for (size_t i = 0; i < enemybullets.size(); i++)
+    {
+        enemybulletsPositions[i] = enemybulletsPositions[i] + glm::vec3{0.06 * enemybulletsDirections[i][0], 0, 0.06 * enemybulletsDirections[i][2]};
     }
 
     for (size_t i = 0; i < tanks.size(); i++)
@@ -246,6 +285,14 @@ void DirectionalLightScene::Update(double delta_time)
         glm::vec3 pos = tanks[i]->getPosition();
         if (sqrt(pos.x * pos.x + pos.z * pos.z) > (10 + 6 * tanks[i]->getID()))
             tanks[i]->move(delta_time * 40);
+        else
+        {
+            if(tanks[i]->canShoot())
+            {
+                 addEnemyBullet(tanks[i]->getPosition());
+            }
+            tanks[i]->decreaseShootingCounter();
+        }
     }
 }
 
@@ -272,6 +319,28 @@ void DirectionalLightScene::fight()
                 break;
             }
         }
+    }
+      for(size_t i = 0; i < enemybullets.size(); i++)
+    {
+        bp = enemybulletsPositions[i];
+        
+           
+            distance = sqrt(( - bp.x)*(- bp.x) + (- bp.z)*(- bp.z));
+            if(distance <= 1)
+            {
+                playerHealth-=10;
+                if(playerHealth==0)
+                {
+                    this->endGame();
+                    
+                    
+                }
+                enemybulletsPositions.erase(enemybulletsPositions.begin() + i);
+                enemybullets.erase(enemybullets.begin() + i);
+                enemybulletsDirections.erase(enemybulletsDirections.begin() + i);
+                break;
+            }
+        
     }
 }
 
@@ -381,7 +450,7 @@ void DirectionalLightScene::Draw()
 
     drawMap(VP);
     drawBullet(VP);
-
+    drawEnemyBullet(VP);
     spawnTank();
     drawTank();
     fight();

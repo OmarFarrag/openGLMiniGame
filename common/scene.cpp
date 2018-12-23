@@ -14,3 +14,11 @@ void Scene::ScrollEvent(double, double){}
 
 Keyboard* Scene::getKeyboard(){ return application->getKeyBoard(); }
 Mouse* Scene::getMouse(){ return application->getMouse(); }
+bool Scene::isDead()
+{
+    return died;
+}
+void Scene::endGame()
+{
+    died=true;
+}

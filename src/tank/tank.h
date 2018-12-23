@@ -12,6 +12,7 @@ class Tank
     Mesh* mesh;
     int ID;
     int maxBullets = 100;
+    int counter=0;
 
   public:
     Tank(glm::vec3 position, Mesh*, float theta, int ID);
@@ -25,4 +26,6 @@ class Tank
     void setHealth(double health);
     glm::mat4 draw();
     void meshDraw();
+    bool canShoot();
+    void decreaseShootingCounter();
 };

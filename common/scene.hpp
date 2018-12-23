@@ -12,6 +12,7 @@ private:
     //Delete copy constructor and assignment operation
     Scene(Scene const &) = delete;
     Scene & operator =(Scene const &) = delete;
+    bool died=false;
 
     
 public:
@@ -40,6 +41,8 @@ public:
     Application* getApplication() { return application; }
     Keyboard* getKeyboard();
     Mouse* getMouse();
+    bool isDead();
+    void endGame();
     
 
 };

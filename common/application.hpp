@@ -20,6 +20,7 @@ private:
 
     Keyboard* keyboard;
     Mouse* mouse;
+  
 
     //Delete copy constructor and assignment operation
     Application(Application const &) = delete;
@@ -43,6 +44,7 @@ public:
 
     Keyboard* getKeyBoard(){return keyboard;}
     Mouse* getMouse(){return mouse;}
+    
 };
 
 #endif

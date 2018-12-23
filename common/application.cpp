@@ -101,7 +101,7 @@ void Application::run(){
     
     double lastFrame = glfwGetTime();
 
-    while(!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)){
+    while(!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)&& !currentScene->isDead()){
         
         double currentFrame = glfwGetTime();
 

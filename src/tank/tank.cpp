@@ -70,3 +70,17 @@ int Tank::getID()
 {
     return ID;
 }
+bool Tank::canShoot()
+{
+    if(counter==0)
+    {
+        counter=500;
+        return true;
+    }
+    return false;
+}
+
+void Tank::decreaseShootingCounter()
+{
+counter--;
+}

@@ -31,6 +31,7 @@ class DirectionalLightScene : public Scene
     Mesh *model, *tankMesh;
     bool check = false;
     float num = 4.33337;
+    bool died=false;
 
     int spawnCounter;
     int spawnDelay;     // Tank spawning speed
@@ -57,8 +58,11 @@ class DirectionalLightScene : public Scene
     Texture2D *heightmap, *bottomTex, *topTex, *moonTex;
     std::vector<Mesh *> bullets = std::vector<Mesh *>();
     std::vector<glm::vec3> bulletsPositions, bulletsDirections;
+     std::vector<Mesh *> enemybullets = std::vector<Mesh *>();
+    std::vector<glm::vec3> enemybulletsPositions, enemybulletsDirections;
     glm::vec3 cameraPosition;
     std::vector<Tank*> tanks;
+    int playerHealth=1000;
 
   public:
     DirectionalLightScene(Application *app) : Scene(app) {}
@@ -72,11 +76,14 @@ class DirectionalLightScene : public Scene
     void drawMap(glm::mat4 VP);
     void initBullets();
     void addBullet();
+    void addEnemyBullet(glm::vec3 enemyTankPosition);
     void drawBullet(glm::mat4 VP);
+    void drawEnemyBullet(glm::mat4 VP);
     void drawTank();
     void spawnTank();
     void fight();
     int genRandom();
+   
 };
 
 #endif
