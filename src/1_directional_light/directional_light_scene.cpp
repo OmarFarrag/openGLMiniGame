@@ -11,59 +11,55 @@
 #include <stdlib.h> /* srand, rand */
 #include <time.h>   /* time */
 
-#define WHITE {1, 1, 1, 1}
-#define QUAD_NORMAL {0, 0, 1}
+#define WHITE      \
+    {              \
+        1, 1, 1, 1 \
+    }
+#define QUAD_NORMAL \
+    {               \
+        0, 0, 1     \
+    }
 
 void DirectionalLightScene::initBlurandGrey()
 {
-	
-	// Create quad to render fboTex on
-	quad = new Mesh();
-	quad->setup<Vertex>({
-		{ { -1, -1,  0 }, WHITE, { 0, 0 }, QUAD_NORMAL },
-		{ { 1, -1,  0 },  WHITE, { 1, 0 }, QUAD_NORMAL },
-		{ { 1,  1,  0 },  WHITE, { 1, 1 }, QUAD_NORMAL },
-		{ { -1,  1,  0 }, WHITE, { 0, 1 }, QUAD_NORMAL },
-		}, {
-			0, 1, 2, 2, 3, 0
-		});
 
-	
-
+    // Create quad to render fboTex on
+    quad = new Mesh();
+    quad->setup<Vertex>({
+                            {{-1, -1, 0}, WHITE, {0, 0}, QUAD_NORMAL},
+                            {{1, -1, 0}, WHITE, {1, 0}, QUAD_NORMAL},
+                            {{1, 1, 0}, WHITE, {1, 1}, QUAD_NORMAL},
+                            {{-1, 1, 0}, WHITE, {0, 1}, QUAD_NORMAL},
+                        },
+                        {0, 1, 2, 2, 3, 0});
 
     blurredShader = new Shader();
-	blurredShader->attach("assets/shaders/blurred.vert", GL_VERTEX_SHADER);
-	blurredShader->attach("assets/shaders/blurred.frag", GL_FRAGMENT_SHADER);
-	blurredShader->link();
-	// Create our additional frame buffer
-	fbo = new FrameBuffer();
-   
+    blurredShader->attach("assets/shaders/blurred.vert", GL_VERTEX_SHADER);
+    blurredShader->attach("assets/shaders/blurred.frag", GL_FRAGMENT_SHADER);
+    blurredShader->link();
+    // Create our additional frame buffer
+    fbo = new FrameBuffer();
 
-	unsigned int width = getApplication()->getWindowSize().x;
-	unsigned int height = getApplication()->getWindowSize().y;
+    unsigned int width = getApplication()->getWindowSize().x;
+    unsigned int height = getApplication()->getWindowSize().y;
 
-	//Create our render target
-	fboTex = new Texture2D();
-	fboTex->bind();
-	fboTex->setup(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	fbo->attach(fboTex, GL_COLOR_ATTACHMENT0);
+    //Create our render target
+    fboTex = new Texture2D();
+    fboTex->bind();
+    fboTex->setup(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fbo->attach(fboTex, GL_COLOR_ATTACHMENT0);
 
-    
+    fboDepthTex = new Texture2D();
+    fboDepthTex->bind();
+    fboDepthTex->setup(GL_DEPTH24_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+    fbo->attach(fboDepthTex, GL_DEPTH_STENCIL_ATTACHMENT);
 
-	fboDepthTex = new Texture2D();
-	fboDepthTex->bind();
-	fboDepthTex->setup(GL_DEPTH24_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
-	fbo->attach(fboDepthTex, GL_DEPTH_STENCIL_ATTACHMENT);
-	
-	if (fbo->isComplete())
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    if (fbo->isComplete())
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 
-	useBlur = true;
-    
-    
-	
+    useBlur = true;
 }
 
 void DirectionalLightScene::initBullets()
@@ -84,7 +80,7 @@ void DirectionalLightScene::addBullet()
     // glm::vec3 bulletpos=TankPosition;
     // bulletpos.y=6;
     bullets.push_back(MeshUtils::Sphere());
-    bulletsPositions.push_back({0,7,0});
+    bulletsPositions.push_back({0, 7, 0});
     bulletsDirections.push_back(controller->getDirection());
 }
 void DirectionalLightScene::addEnemyBullet(glm::vec3 enemyTankPosition)
@@ -92,10 +88,9 @@ void DirectionalLightScene::addEnemyBullet(glm::vec3 enemyTankPosition)
     enemybullets.push_back(MeshUtils::Sphere());
     enemybulletsPositions.push_back(enemyTankPosition);
 
-    
-    enemyTankPosition[0] = enemyTankPosition[0] / enemyTankPosition.length(); 
-    enemyTankPosition[1] = enemyTankPosition[1] / enemyTankPosition.length(); 
-    enemyTankPosition[2] = enemyTankPosition[2] / enemyTankPosition.length(); 
+    enemyTankPosition[0] = enemyTankPosition[0] / enemyTankPosition.length();
+    enemyTankPosition[1] = enemyTankPosition[1] / enemyTankPosition.length();
+    enemyTankPosition[2] = enemyTankPosition[2] / enemyTankPosition.length();
 
     enemybulletsDirections.push_back(-enemyTankPosition);
 }
@@ -135,7 +130,6 @@ void DirectionalLightScene::drawEnemyBullet(glm::mat4 VP)
         enemybullets[i]->draw();
     }
 }
-
 
 void DirectionalLightScene::initMap()
 {
@@ -199,7 +193,7 @@ void DirectionalLightScene::drawMap(glm::mat4 VP)
 void DirectionalLightScene::Initialize()
 {
     spawnCounter = -1;
-    spawnDelay = 1000;
+    spawnDelay = 500;
     locationsCount = 25;
     tankLocations = new int[locationsCount];
     for (int i = 0; i < locationsCount; i++)
@@ -277,7 +271,8 @@ void DirectionalLightScene::Update(double delta_time)
 {
     controller->update(delta_time);
     Keyboard *kb = getKeyboard();
-    if(getKeyboard()->justPressed(GLFW_KEY_T)) useBlur = !useBlur;
+    if (getKeyboard()->justPressed(GLFW_KEY_T))
+        useBlur = !useBlur;
 
     //cameraPosition = controller->getPosition();
 
@@ -328,11 +323,10 @@ void DirectionalLightScene::Update(double delta_time)
     //move bullets
     for (size_t i = 0; i < bullets.size(); i++)
     {
-         
 
         bulletsPositions[i] = bulletsPositions[i] + glm::vec3{0.06 * bulletsDirections[i][0], 0.06 * bulletsDirections[i][1], 0.06 * bulletsDirections[i][2]};
     }
-        for (size_t i = 0; i < enemybullets.size(); i++)
+    for (size_t i = 0; i < enemybullets.size(); i++)
     {
         enemybulletsPositions[i] = enemybulletsPositions[i] + glm::vec3{0.06 * enemybulletsDirections[i][0], 0, 0.06 * enemybulletsDirections[i][2]};
     }
@@ -341,12 +335,12 @@ void DirectionalLightScene::Update(double delta_time)
     {
         glm::vec3 pos = tanks[i]->getPosition();
         if (sqrt(pos.x * pos.x + pos.z * pos.z) > (10 + 6 * tanks[i]->getID()))
-            tanks[i]->move(delta_time * 40);
+            tanks[i]->move(delta_time * 5);
         else
         {
-            if(tanks[i]->canShoot())
+            if (tanks[i]->canShoot())
             {
-                 addEnemyBullet(tanks[i]->getPosition());
+                addEnemyBullet(tanks[i]->getPosition());
             }
             tanks[i]->decreaseShootingCounter();
         }
@@ -357,16 +351,16 @@ void DirectionalLightScene::fight()
 {
     float distance;
     glm::vec3 tp, bp;
-    for(size_t i = 0; i < bullets.size(); i++)
+    for (size_t i = 0; i < bullets.size(); i++)
     {
         bp = bulletsPositions[i];
-        for(size_t j = 0; j < tanks.size(); j++)
+        for (size_t j = 0; j < tanks.size(); j++)
         {
             tp = tanks[j]->getPosition();
-            distance = sqrt((tp.x - bp.x)*(tp.x - bp.x) + (tp.y - bp.y)*(tp.y - bp.y) + (tp.z - bp.z)*(tp.z - bp.z));
-            if(distance <= 1)
+            distance = sqrt((tp.x - bp.x) * (tp.x - bp.x) + (tp.y - bp.y) * (tp.y - bp.y) + (tp.z - bp.z) * (tp.z - bp.z));
+            if (distance <= 1)
             {
-                if(!tanks[j]->decreaseHealth(10))
+                if (!tanks[j]->decreaseHealth(10))
                 {
                     tanks.erase(tanks.begin() + j);
                 }
@@ -377,27 +371,23 @@ void DirectionalLightScene::fight()
             }
         }
     }
-      for(size_t i = 0; i < enemybullets.size(); i++)
+    for (size_t i = 0; i < enemybullets.size(); i++)
     {
         bp = enemybulletsPositions[i];
-        
-           
-            distance = sqrt(( - bp.x)*(- bp.x) + (- bp.z)*(- bp.z));
-            if(distance <= 1)
+
+        distance = sqrt((-bp.x) * (-bp.x) + (-bp.z) * (-bp.z));
+        if (distance <= 1)
+        {
+            playerHealth -= 10;
+            if (playerHealth == 0)
             {
-                playerHealth-=10;
-                if(playerHealth==0)
-                {
-                    this->endGame();
-                    
-                    
-                }
-                enemybulletsPositions.erase(enemybulletsPositions.begin() + i);
-                enemybullets.erase(enemybullets.begin() + i);
-                enemybulletsDirections.erase(enemybulletsDirections.begin() + i);
-                break;
+                this->endGame();
             }
-        
+            enemybulletsPositions.erase(enemybulletsPositions.begin() + i);
+            enemybullets.erase(enemybullets.begin() + i);
+            enemybulletsDirections.erase(enemybulletsDirections.begin() + i);
+            break;
+        }
     }
 }
 
@@ -418,7 +408,8 @@ inline glm::vec3 getTimeOfDayMix(float sunPitch)
 
 void DirectionalLightScene::Draw()
 {
-    if(useBlur) fbo->bind();
+    if (useBlur)
+        fbo->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear colors and depth
 
     glm::mat4 VP = camera->getVPMatrix();
@@ -465,7 +456,6 @@ void DirectionalLightScene::Draw()
     // }
     // ground->draw();
 
-   
     //tankMesh->draw();
 
     // glm::mat4 model3_mat = glm::translate(glm::mat4(), {4, 1, 0});
@@ -478,7 +468,7 @@ void DirectionalLightScene::Draw()
     float emissive_power = glm::sin((float)glfwGetTime()) + 1;
     shader->set("material.emissive_tint", glm::vec3(1, 1, 1) * emissive_power);
     //model->draw();
-   
+
     //Draw SkyBox
     skyShader->use();
     skyShader->set("VP", VP);
@@ -496,26 +486,14 @@ void DirectionalLightScene::Draw()
     sky->draw();
     glCullFace(GL_BACK);
 
-    
     drawMap(VP);
     drawBullet(VP);
     drawEnemyBullet(VP);
     spawnTank();
     drawTank();
     fight();
-    if(useBlur){
-		// Switch back to default frame buffer
-        glActiveTexture(GL_TEXTURE0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-         
-		blurredShader->use();
-		fboTex->bind();
-		quad->draw();
-        glClear(GL_DEPTH_BUFFER_BIT);
-	}
     fbo->bind();
-     glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
+    glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
     model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
     shader->set("M", model2_mat);
@@ -526,8 +504,21 @@ void DirectionalLightScene::Draw()
         glActiveTexture(GL_TEXTURE0 + i);
         TankText[i]->bind();
     }
-     tankMesh->draw();
+        if (useBlur)
+    {
+        // Switch back to default frame buffer
+        glActiveTexture(GL_TEXTURE0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        blurredShader->use();
+        fboTex->bind();
+        quad->draw();
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
+            glActiveTexture(GL_TEXTURE0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    tankMesh->draw();
 }
 
 void DirectionalLightScene::Finalize()
