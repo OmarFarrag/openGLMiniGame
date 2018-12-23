@@ -35,7 +35,7 @@ public:
 
     GLsizei getWidth(){return w;}
     GLsizei getHeight(){return h;}
-      GLuint getID() { return id; }
+    GLuint getID() { return id; }
 };
 
 #endif

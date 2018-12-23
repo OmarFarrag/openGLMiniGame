@@ -11,6 +11,7 @@
 #include <textures/texture2d.hpp>
 #include <camera/camera.hpp>
 #include <camera/controllers/fly_camera_controller.hpp>
+#include <framebuffer.hpp>
 
 enum TextureType
 {
@@ -52,10 +53,11 @@ class DirectionalLightScene : public Scene
 
     float sunYaw, sunPitch;
 
-    Shader *terrainShader, *bulletShader;
+    Shader *terrainShader, *bulletShader,*blurredShader;
     GLuint terrainmvpLoc, terraintexLoc, terraintilingLoc, terrainbottomLoc, terraintopLoc, bulletmvp, bullettexLoc;
-    Mesh *plane;
-    Texture2D *heightmap, *bottomTex, *topTex, *moonTex;
+    Mesh *plane,*quad;
+    Texture2D *heightmap, *bottomTex, *topTex, *moonTex,*fboTex, *fboDepthTex;
+    FrameBuffer* fbo;
     std::vector<Mesh *> bullets = std::vector<Mesh *>();
     std::vector<glm::vec3> bulletsPositions, bulletsDirections;
      std::vector<Mesh *> enemybullets = std::vector<Mesh *>();
@@ -63,6 +65,7 @@ class DirectionalLightScene : public Scene
     glm::vec3 cameraPosition;
     std::vector<Tank*> tanks;
     int playerHealth=1000;
+    bool useBlur=false;
 
   public:
     DirectionalLightScene(Application *app) : Scene(app) {}
@@ -83,6 +86,7 @@ class DirectionalLightScene : public Scene
     void spawnTank();
     void fight();
     int genRandom();
+    void initBlurandGrey();
    
 };
 

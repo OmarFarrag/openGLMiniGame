@@ -11,6 +11,61 @@
 #include <stdlib.h> /* srand, rand */
 #include <time.h>   /* time */
 
+#define WHITE {1, 1, 1, 1}
+#define QUAD_NORMAL {0, 0, 1}
+
+void DirectionalLightScene::initBlurandGrey()
+{
+	
+	// Create quad to render fboTex on
+	quad = new Mesh();
+	quad->setup<Vertex>({
+		{ { -1, -1,  0 }, WHITE, { 0, 0 }, QUAD_NORMAL },
+		{ { 1, -1,  0 },  WHITE, { 1, 0 }, QUAD_NORMAL },
+		{ { 1,  1,  0 },  WHITE, { 1, 1 }, QUAD_NORMAL },
+		{ { -1,  1,  0 }, WHITE, { 0, 1 }, QUAD_NORMAL },
+		}, {
+			0, 1, 2, 2, 3, 0
+		});
+
+	
+
+
+    blurredShader = new Shader();
+	blurredShader->attach("assets/shaders/blurred.vert", GL_VERTEX_SHADER);
+	blurredShader->attach("assets/shaders/blurred.frag", GL_FRAGMENT_SHADER);
+	blurredShader->link();
+	// Create our additional frame buffer
+	fbo = new FrameBuffer();
+   
+
+	unsigned int width = getApplication()->getWindowSize().x;
+	unsigned int height = getApplication()->getWindowSize().y;
+
+	//Create our render target
+	fboTex = new Texture2D();
+	fboTex->bind();
+	fboTex->setup(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	fbo->attach(fboTex, GL_COLOR_ATTACHMENT0);
+
+    
+
+	fboDepthTex = new Texture2D();
+	fboDepthTex->bind();
+	fboDepthTex->setup(GL_DEPTH24_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+	fbo->attach(fboDepthTex, GL_DEPTH_STENCIL_ATTACHMENT);
+	
+	if (fbo->isComplete())
+		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+	useBlur = true;
+    
+    
+	
+}
+
 void DirectionalLightScene::initBullets()
 {
     bulletShader = new Shader();
@@ -154,6 +209,7 @@ void DirectionalLightScene::Initialize()
     cameraPosition = {0, 7, 0};
     initMap();
     initBullets();
+    initBlurandGrey();
 
     shader = new Shader();
     shader->attach("assets/shaders/directional.vert", GL_VERTEX_SHADER);
@@ -221,6 +277,7 @@ void DirectionalLightScene::Update(double delta_time)
 {
     controller->update(delta_time);
     Keyboard *kb = getKeyboard();
+    if(getKeyboard()->justPressed(GLFW_KEY_T)) useBlur = !useBlur;
 
     //cameraPosition = controller->getPosition();
 
@@ -361,6 +418,7 @@ inline glm::vec3 getTimeOfDayMix(float sunPitch)
 
 void DirectionalLightScene::Draw()
 {
+    if(useBlur) fbo->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear colors and depth
 
     glm::mat4 VP = camera->getVPMatrix();
@@ -407,17 +465,7 @@ void DirectionalLightScene::Draw()
     // }
     // ground->draw();
 
-    glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
-                           glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
-    model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
-    shader->set("M", model2_mat);
-    shader->set("M_it", glm::transpose(glm::inverse(model2_mat)));
-
-    for (int i = 0; i < 5; i++)
-    {
-        glActiveTexture(GL_TEXTURE0 + i);
-        TankText[i]->bind();
-    }
+   
     //tankMesh->draw();
 
     // glm::mat4 model3_mat = glm::translate(glm::mat4(), {4, 1, 0});
@@ -430,7 +478,7 @@ void DirectionalLightScene::Draw()
     float emissive_power = glm::sin((float)glfwGetTime()) + 1;
     shader->set("material.emissive_tint", glm::vec3(1, 1, 1) * emissive_power);
     //model->draw();
-    tankMesh->draw();
+   
     //Draw SkyBox
     skyShader->use();
     skyShader->set("VP", VP);
@@ -448,12 +496,38 @@ void DirectionalLightScene::Draw()
     sky->draw();
     glCullFace(GL_BACK);
 
+    
     drawMap(VP);
     drawBullet(VP);
     drawEnemyBullet(VP);
     spawnTank();
     drawTank();
     fight();
+    if(useBlur){
+		// Switch back to default frame buffer
+        glActiveTexture(GL_TEXTURE0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         
+		blurredShader->use();
+		fboTex->bind();
+		quad->draw();
+        glClear(GL_DEPTH_BUFFER_BIT);
+	}
+    fbo->bind();
+     glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
+                           glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
+    model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
+    shader->set("M", model2_mat);
+    shader->set("M_it", glm::transpose(glm::inverse(model2_mat)));
+
+    for (int i = 0; i < 5; i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        TankText[i]->bind();
+    }
+     tankMesh->draw();
+
 }
 
 void DirectionalLightScene::Finalize()
