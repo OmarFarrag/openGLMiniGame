@@ -13,7 +13,7 @@ private:
     Texture2D & operator =(Texture2D const &) = delete;
 public:
     Texture2D(){glGenTextures(1, &id); w=h=0;}
-    ~Texture2D(){glDeleteTextures(1, &id);}
+    // ~Texture2D(){glDeleteTextures(1, &id);}
 
     //Bind the texture to the target GL_TEXTURE_2D
     void bind(){glBindTexture(GL_TEXTURE_2D, id);}
