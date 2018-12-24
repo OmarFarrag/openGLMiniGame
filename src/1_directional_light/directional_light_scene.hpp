@@ -33,6 +33,7 @@ class DirectionalLightScene : public Scene
     bool check = false;
     float num = 4.33337;
     bool died=false;
+    int blurCounter=1000;
 
     int spawnCounter;
     int spawnDelay;     // Tank spawning speed
@@ -53,10 +54,11 @@ class DirectionalLightScene : public Scene
 
     float sunYaw, sunPitch;
 
-    Shader *terrainShader, *bulletShader,*blurredShader;
+    Shader *terrainShader, *bulletShader,*blurredShader,*pixalShader;
     GLuint terrainmvpLoc, terraintexLoc, terraintilingLoc, terrainbottomLoc, terraintopLoc, bulletmvp, bullettexLoc;
-    Mesh *plane,*quad;
-    Texture2D *heightmap, *bottomTex, *topTex, *moonTex,*fboTex, *fboDepthTex;
+    Mesh *plane,*quad,*quadPixal;
+    Texture2D *heightmap, *bottomTex, *topTex, *moonTex,*fboTex, *fboDepthTex,*fboTexPixal,*fboDepthTexPixal;
+    FrameBuffer* fboPixal;
     FrameBuffer* fbo;
     std::vector<Mesh *> bullets = std::vector<Mesh *>();
     std::vector<glm::vec3> bulletsPositions, bulletsDirections;
@@ -66,6 +68,7 @@ class DirectionalLightScene : public Scene
     std::vector<Tank*> tanks;
     int playerHealth=1000;
     bool useBlur=false;
+    bool usePixal=false;
 
   public:
     DirectionalLightScene(Application *app) : Scene(app) {}
@@ -87,6 +90,7 @@ class DirectionalLightScene : public Scene
     void fight();
     int genRandom();
     void initBlurandGrey();
+    void initPixalization();
    
 };
 

@@ -59,8 +59,51 @@ void DirectionalLightScene::initBlurandGrey()
     if (fbo->isComplete())
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 
-    useBlur = true;
+    useBlur = false;
 }
+
+void DirectionalLightScene::initPixalization()
+{
+
+    // Create quad to render fboTex on
+    quadPixal = new Mesh();
+    quadPixal->setup<Vertex>({
+                            {{-1, -1, 0}, WHITE, {0, 0}, QUAD_NORMAL},
+                            {{1, -1, 0}, WHITE, {1, 0}, QUAD_NORMAL},
+                            {{1, 1, 0}, WHITE, {1, 1}, QUAD_NORMAL},
+                            {{-1, 1, 0}, WHITE, {0, 1}, QUAD_NORMAL},
+                        },
+                        {0, 1, 2, 2, 3, 0});
+
+    pixalShader = new Shader();
+    pixalShader->attach("assets/shaders/pixal.vert", GL_VERTEX_SHADER);
+    pixalShader->attach("assets/shaders/pixal.frag", GL_FRAGMENT_SHADER);
+    pixalShader->link();
+    // Create our additional frame buffer
+    fboPixal = new FrameBuffer();
+
+    unsigned int width = getApplication()->getWindowSize().x;
+    unsigned int height = getApplication()->getWindowSize().y;
+
+    //Create our render target
+    fboTexPixal = new Texture2D();
+    fboTexPixal->bind();
+    fboTexPixal->setup(GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fboPixal->attach(fboTexPixal, GL_COLOR_ATTACHMENT0);
+
+    fboDepthTexPixal = new Texture2D();
+    fboDepthTexPixal->bind();
+    fboDepthTexPixal->setup(GL_DEPTH24_STENCIL8, width, height, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+    fboPixal->attach(fboDepthTexPixal, GL_DEPTH_STENCIL_ATTACHMENT);
+
+    if (fboPixal->isComplete())
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+    usePixal = false;
+}
+
 
 void DirectionalLightScene::initBullets()
 {
@@ -204,7 +247,7 @@ void DirectionalLightScene::Initialize()
     initMap();
     initBullets();
     initBlurandGrey();
-
+    initPixalization();
     shader = new Shader();
     shader->attach("assets/shaders/directional.vert", GL_VERTEX_SHADER);
     shader->attach("assets/shaders/directional.frag", GL_FRAGMENT_SHADER);
@@ -272,7 +315,7 @@ void DirectionalLightScene::Update(double delta_time)
     controller->update(delta_time);
     Keyboard *kb = getKeyboard();
     if (getKeyboard()->justPressed(GLFW_KEY_T))
-        useBlur = !useBlur;
+        usePixal= !usePixal;
 
     //cameraPosition = controller->getPosition();
 
@@ -378,6 +421,7 @@ void DirectionalLightScene::fight()
         distance = sqrt((-bp.x) * (-bp.x) + (-bp.z) * (-bp.z));
         if (distance <= 1)
         {
+            useBlur=true;
             playerHealth -= 10;
             if (playerHealth == 0)
             {
@@ -410,6 +454,9 @@ void DirectionalLightScene::Draw()
 {
     if (useBlur)
         fbo->bind();
+
+    if (usePixal)
+        fboPixal->bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear colors and depth
 
     glm::mat4 VP = camera->getVPMatrix();
@@ -492,7 +539,7 @@ void DirectionalLightScene::Draw()
     spawnTank();
     drawTank();
     fight();
-    fbo->bind();
+    //fbo->bind();
     glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
     model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
@@ -504,21 +551,46 @@ void DirectionalLightScene::Draw()
         glActiveTexture(GL_TEXTURE0 + i);
         TankText[i]->bind();
     }
-        if (useBlur)
+    tankMesh->draw();
+
+      if (useBlur )
+    {
+        // Switch back to default frame buffer
+        glActiveTexture(GL_TEXTURE0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        blurCounter-=100;
+        blurredShader->use();
+        fboTex->bind();
+        quad->draw();
+        glClear(GL_DEPTH_BUFFER_BIT);
+        if(blurCounter<0)
+        {
+            useBlur=false;
+        }
+        
+    }
+
+      glActiveTexture(GL_TEXTURE0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+     if (usePixal )
     {
         // Switch back to default frame buffer
         glActiveTexture(GL_TEXTURE0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        blurredShader->use();
-        fboTex->bind();
-        quad->draw();
+        pixalShader->use();
+        fboTexPixal->bind();
+        quadPixal->draw();
         glClear(GL_DEPTH_BUFFER_BIT);
+        
     }
-            glActiveTexture(GL_TEXTURE0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    tankMesh->draw();
+
+    
+    
+   
+    
 }
 
 void DirectionalLightScene::Finalize()
