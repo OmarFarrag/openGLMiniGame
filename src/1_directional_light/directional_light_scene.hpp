@@ -33,7 +33,7 @@ class DirectionalLightScene : public Scene
     bool check = false;
     float num = 4.33337;
     bool died=false;
-    int blurCounter=1000;
+    int blurCounter=20;
 
     int spawnCounter;
     int spawnDelay;     // Tank spawning speed
@@ -42,9 +42,6 @@ class DirectionalLightScene : public Scene
     int maxPerColumn;   // Max number of tanks per column
     
     Texture2D *TankText[5];
-    Texture2D *metal[5];
-    Texture2D *wood[5];
-    Texture2D *asphalt[5];
     Texture2D *checkers[5];
     Camera *camera;
     GLuint mvpLoc;

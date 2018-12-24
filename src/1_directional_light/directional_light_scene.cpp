@@ -68,12 +68,12 @@ void DirectionalLightScene::initPixalization()
     // Create quad to render fboTex on
     quadPixal = new Mesh();
     quadPixal->setup<Vertex>({
-                            {{-1, -1, 0}, WHITE, {0, 0}, QUAD_NORMAL},
-                            {{1, -1, 0}, WHITE, {1, 0}, QUAD_NORMAL},
-                            {{1, 1, 0}, WHITE, {1, 1}, QUAD_NORMAL},
-                            {{-1, 1, 0}, WHITE, {0, 1}, QUAD_NORMAL},
-                        },
-                        {0, 1, 2, 2, 3, 0});
+                                 {{-1, -1, 0}, WHITE, {0, 0}, QUAD_NORMAL},
+                                 {{1, -1, 0}, WHITE, {1, 0}, QUAD_NORMAL},
+                                 {{1, 1, 0}, WHITE, {1, 1}, QUAD_NORMAL},
+                                 {{-1, 1, 0}, WHITE, {0, 1}, QUAD_NORMAL},
+                             },
+                             {0, 1, 2, 2, 3, 0});
 
     pixalShader = new Shader();
     pixalShader->attach("assets/shaders/pixal.vert", GL_VERTEX_SHADER);
@@ -103,7 +103,6 @@ void DirectionalLightScene::initPixalization()
 
     usePixal = false;
 }
-
 
 void DirectionalLightScene::initBullets()
 {
@@ -315,7 +314,7 @@ void DirectionalLightScene::Update(double delta_time)
     controller->update(delta_time);
     Keyboard *kb = getKeyboard();
     if (getKeyboard()->justPressed(GLFW_KEY_T))
-        usePixal= !usePixal;
+        usePixal = !usePixal;
 
     //cameraPosition = controller->getPosition();
 
@@ -421,7 +420,7 @@ void DirectionalLightScene::fight()
         distance = sqrt((-bp.x) * (-bp.x) + (-bp.z) * (-bp.z));
         if (distance <= 1)
         {
-            useBlur=true;
+            useBlur = true;
             playerHealth -= 10;
             if (playerHealth == 0)
             {
@@ -494,27 +493,8 @@ void DirectionalLightScene::Draw()
     shader->set("material.roughness_scale", 1.0f);
     shader->set("material.emissive_tint", {1, 1, 1});
 
-    // glm::mat4 ground_mat = glm::scale(glm::mat4(), glm::vec3(50, 1, 50));
-    // shader->set("M", ground_mat);
-    // shader->set("M_it", glm::transpose(glm::inverse(ground_mat)));
-    // for(int i = 0; i < 5; i++){
-    //     glActiveTexture(GL_TEXTURE0+i);
-    //     checkers[i]->bind();
-    // }
-    // ground->draw();
-
-    //tankMesh->draw();
-
-    // glm::mat4 model3_mat = glm::translate(glm::mat4(), {4, 1, 0});
-    // shader->set("M", model3_mat);
-    // shader->set("M_it", glm::transpose(glm::inverse(model3_mat)));
-    // for(int i = 0; i < 5; i++){
-    //     glActiveTexture(GL_TEXTURE0+i);
-    //     asphalt[i]->bind();
-    // }
     float emissive_power = glm::sin((float)glfwGetTime()) + 1;
     shader->set("material.emissive_tint", glm::vec3(1, 1, 1) * emissive_power);
-    //model->draw();
 
     //Draw SkyBox
     skyShader->use();
@@ -539,7 +519,6 @@ void DirectionalLightScene::Draw()
     spawnTank();
     drawTank();
     fight();
-    //fbo->bind();
     glm::mat4 model2_mat = glm::translate(glm::mat4(), {0.3, 6, 0}) *
                            glm::scale(glm::mat4(), glm::vec3(0.01, 0.01, 0.01));
     model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
@@ -551,29 +530,29 @@ void DirectionalLightScene::Draw()
         glActiveTexture(GL_TEXTURE0 + i);
         TankText[i]->bind();
     }
-    tankMesh->draw();
 
-      if (useBlur )
+    if (useBlur)
     {
         // Switch back to default frame buffer
         glActiveTexture(GL_TEXTURE0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        blurCounter-=100;
+        blurCounter -= 1;
         blurredShader->use();
         fboTex->bind();
         quad->draw();
         glClear(GL_DEPTH_BUFFER_BIT);
-        if(blurCounter<0)
+        if (blurCounter < 0)
         {
-            useBlur=false;
+            useBlur = false;
+            blurCounter = 20;
         }
-        
     }
-
-      glActiveTexture(GL_TEXTURE0);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-     if (usePixal )
+    shader->use();
+    glActiveTexture(GL_TEXTURE0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    tankMesh->draw();
+    if (usePixal)
     {
         // Switch back to default frame buffer
         glActiveTexture(GL_TEXTURE0);
@@ -584,13 +563,7 @@ void DirectionalLightScene::Draw()
         fboTexPixal->bind();
         quadPixal->draw();
         glClear(GL_DEPTH_BUFFER_BIT);
-        
     }
-
-    
-    
-   
-    
 }
 
 void DirectionalLightScene::Finalize()
@@ -602,9 +575,7 @@ void DirectionalLightScene::Finalize()
     delete ground;
     for (int i = 0; i < 5; i++)
     {
-        delete metal[i];
-        delete wood[i];
-        delete asphalt[i];
+        delete TankText[i];
         delete checkers[i];
     }
     delete skyShader;
@@ -635,6 +606,8 @@ void DirectionalLightScene::spawnTank()
     spawnCounter++;
     if (spawnCounter % spawnDelay)
         return;
+    if (spawnDelay > 120)
+        spawnDelay = spawnDelay * 0.93;
 
     int location = genRandom();
     if (location == -1)
