@@ -528,6 +528,7 @@ void DirectionalLightScene::Draw()
     model2_mat = model2_mat * glm::rotate(glm::mat4(), -controller->getYaw() + glm::half_pi<float>(), {0, 1, 0});
     shader->set("M", model2_mat);
     shader->set("M_it", glm::transpose(glm::inverse(model2_mat)));
+    tankMesh->draw();
 
     for (int i = 0; i < 5; i++)
     {
