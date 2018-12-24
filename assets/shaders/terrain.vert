@@ -12,7 +12,7 @@ out float height;
 
 out float visibility;
 
-const float density = 0.015f;
+const float density = 0.01f;
 const float gradient = 1.2f;
 
 void main()

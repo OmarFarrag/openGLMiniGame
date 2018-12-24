@@ -185,6 +185,7 @@ void DirectionalLightScene::initMap()
     terraintilingLoc = glGetUniformLocation(terrainShader->getID(), "tiling");
     terrainbottomLoc = glGetUniformLocation(terrainShader->getID(), "bottom");
     terraintopLoc = glGetUniformLocation(terrainShader->getID(), "top");
+    skyColorLoc2 = glGetUniformLocation(terrainShader->getID(), "skyColor");
 
     plane = MeshUtils::SubdividedPlane();
 
@@ -209,9 +210,10 @@ void DirectionalLightScene::initMap()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16);
 }
 
-void DirectionalLightScene::drawMap(glm::mat4 VP)
+void DirectionalLightScene::drawMap(glm::mat4 VP, glm::vec3 skyColor)
 {
     terrainShader->use();
+    terrainShader->set("skyColor", skyColor);
 
     glActiveTexture(GL_TEXTURE0);
     heightmap->bind();
@@ -266,6 +268,7 @@ void DirectionalLightScene::Initialize()
     tankMesh = MeshUtils::LoadObj("assets/models/Tank_M1A1/Tank M1A1.obj");
 
     mvpLoc = glGetUniformLocation(shader->getID(), "MVP");
+    skyColorLoc1 = glGetUniformLocation(shader->getID(), "skyColor");
 
     TankText[ALBEDO] = TextureUtils::Load2DTextureFromFile("assets/textures/Metal_col.jpg");
     TankText[SPECULAR] = TextureUtils::Load2DTextureFromFile("assets/textures/Metal_spc.jpg");
@@ -481,6 +484,7 @@ void DirectionalLightScene::Draw()
     shader->set("light.color", sunColor);
     shader->set("light.direction", -sun_direction);
     shader->set("ambient", 0.5f * skyColor);
+    shader->set("skyColor", skyColor);
 
     shader->set("material.albedo", 0);
     shader->set("material.specular", 1);
@@ -513,7 +517,7 @@ void DirectionalLightScene::Draw()
     sky->draw();
     glCullFace(GL_BACK);
 
-    drawMap(VP);
+    drawMap(VP, skyColor);
     drawBullet(VP);
     drawEnemyBullet(VP);
     spawnTank();

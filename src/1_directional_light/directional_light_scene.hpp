@@ -45,6 +45,8 @@ class DirectionalLightScene : public Scene
     Texture2D *checkers[5];
     Camera *camera;
     GLuint mvpLoc;
+    GLuint skyColorLoc1;
+    GLuint skyColorLoc2;
     FlyCameraController *controller;
     glm::vec3 TankPosition;
     float TankRotation = 0;
@@ -76,7 +78,7 @@ class DirectionalLightScene : public Scene
     void Finalize() override;
 
     void initMap();
-    void drawMap(glm::mat4 VP);
+    void drawMap(glm::mat4 VP, glm::vec3 skyColor);
     void initBullets();
     void addBullet();
     void addEnemyBullet(glm::vec3 enemyTankPosition);

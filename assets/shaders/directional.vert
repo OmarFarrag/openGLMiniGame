@@ -12,7 +12,7 @@ uniform vec3 cam_pos;
 
 out float visibility;
 
-const float density = 0.018f;
+const float density = 0.01f;
 const float gradient = 1.2f;
 
 out Interpolators {

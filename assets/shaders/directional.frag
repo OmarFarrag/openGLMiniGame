@@ -7,13 +7,13 @@ in Interpolators {
 } fs_in;
 
 in float visibility;
-vec3 skyColour = vec3(0.859375,0.809375,0.889375);
+uniform vec3 skyColor;
+// vec3 skyColor = vec3(0.859375,0.809375,0.889375);
 
 struct Material {
     sampler2D ambient_occlusion;
     sampler2D emissive;
     vec3 emissive_tint;
-    //TODO: Complete The Material Struct. Find the variable names in the scene code. 
     sampler2D albedo;
     sampler2D specular;
     sampler2D roughness;
@@ -70,5 +70,5 @@ void main()
         specular*light.color*phong(n, l, v, shininess),
         1.0f
     );
-    color = mix(vec4(skyColour,1.0), color, visibility);
+    color = mix(vec4(skyColor,1.0), color, visibility);
 }
